@@ -1,0 +1,55 @@
+Day,Category,Event,Start Time,End Time,Venue,Venue Photos,Map Navigation
+Day 1,Ceremony,Inauguration Ceremony,15:30,17:45,Auditorium,https://www.google.com/search?tbm=isch&q=Auditorium%20IIT%20Kanpur,https://www.google.com/maps/search/?api=1&query=Auditorium%20IIT%20Kanpur
+Day 1,Competition,Hovermania,18:00,21:15,Events Ground,https://www.google.com/search?tbm=isch&q=Events%20Ground%20IIT%20Kanpur,https://www.google.com/maps/search/?api=1&query=Events%20Ground%20IIT%20Kanpur
+Day 1,Competition,Atlassian Career Cafe,18:30,20:00,L-16,https://www.google.com/search?tbm=isch&q=L-16%20IIT%20Kanpur,https://www.google.com/maps/search/?api=1&query=L-16%20IIT%20Kanpur
+Day 1,Competition,Multirotor,21:15,00:00,Events Ground,https://www.google.com/search?tbm=isch&q=Events%20Ground%20IIT%20Kanpur,https://www.google.com/maps/search/?api=1&query=Events%20Ground%20IIT%20Kanpur
+Day 1,Show,Aditya Chauhan,21:00,22:00,Events Ground,https://www.google.com/search?tbm=isch&q=Events%20Ground%20IIT%20Kanpur,https://www.google.com/maps/search/?api=1&query=Events%20Ground%20IIT%20Kanpur
+Day 1,Show,Swar Duet,23:00,00:00,Events Ground,https://www.google.com/search?tbm=isch&q=Events%20Ground%20IIT%20Kanpur,https://www.google.com/maps/search/?api=1&query=Events%20Ground%20IIT%20Kanpur
+Day 2,Competition,Sky Sparks,07:30,16:00,Hockey Ground,https://www.google.com/search?tbm=isch&q=Hockey%20Ground%20IIT%20Kanpur,https://www.google.com/maps/search/?api=1&query=Hockey%20Ground%20IIT%20Kanpur
+Day 2,Competition,Eightfold AI Hackathon,08:00,17:00,L-1,https://www.google.com/search?tbm=isch&q=L-1%20IIT%20Kanpur,https://www.google.com/maps/search/?api=1&query=L-1%20IIT%20Kanpur
+Day 2,Competition,Bridge Design Challenge,09:00,12:00,Dance Room / Structure Lab,https://www.google.com/search?tbm=isch&q=Dance%20Room%20/%20Structure%20Lab%20IIT%20Kanpur,https://www.google.com/maps/search/?api=1&query=Dance%20Room%20/%20Structure%20Lab%20IIT%20Kanpur
+Day 2,Competition,UNHRC,09:00,13:00,Senate,https://www.google.com/search?tbm=isch&q=Senate%20IIT%20Kanpur,https://www.google.com/maps/search/?api=1&query=Senate%20IIT%20Kanpur
+Day 2,Competition,Atlassian Hackathon,09:00,16:00,L-16,https://www.google.com/search?tbm=isch&q=L-16%20IIT%20Kanpur,https://www.google.com/maps/search/?api=1&query=L-16%20IIT%20Kanpur
+Day 2,Competition,Manoeuvre,09:00,16:30,Events Ground,https://www.google.com/search?tbm=isch&q=Events%20Ground%20IIT%20Kanpur,https://www.google.com/maps/search/?api=1&query=Events%20Ground%20IIT%20Kanpur
+Day 2,Competition,Hovermania,10:00,12:00,Events Ground,https://www.google.com/search?tbm=isch&q=Events%20Ground%20IIT%20Kanpur,https://www.google.com/maps/search/?api=1&query=Events%20Ground%20IIT%20Kanpur
+Day 2,Competition,CNC,10:00,12:00,L-7,https://www.google.com/search?tbm=isch&q=L-7%20IIT%20Kanpur,https://www.google.com/maps/search/?api=1&query=L-7%20IIT%20Kanpur
+Day 2,Competition,IARC,10:00,17:00,LITSOC Room,https://www.google.com/search?tbm=isch&q=LITSOC%20Room%20IIT%20Kanpur,https://www.google.com/maps/search/?api=1&query=LITSOC%20Room%20IIT%20Kanpur
+Day 2,Competition,Autodesk Design Challenge,13:30,16:30,L-3,https://www.google.com/search?tbm=isch&q=L-3%20IIT%20Kanpur,https://www.google.com/maps/search/?api=1&query=L-3%20IIT%20Kanpur
+Day 2,Competition,OAS,14:00,15:00,L-15,https://www.google.com/search?tbm=isch&q=L-15%20IIT%20Kanpur,https://www.google.com/maps/search/?api=1&query=L-15%20IIT%20Kanpur
+Day 2,Competition,Speed Quant,14:00,15:00,L-8,https://www.google.com/search?tbm=isch&q=L-8%20IIT%20Kanpur,https://www.google.com/maps/search/?api=1&query=L-8%20IIT%20Kanpur
+Day 2,Competition,CTF,14:00,15:00,L-16,https://www.google.com/search?tbm=isch&q=L-16%20IIT%20Kanpur,https://www.google.com/maps/search/?api=1&query=L-16%20IIT%20Kanpur
+Day 2,Competition,Multirotor,14:00,16:30,Events Ground,https://www.google.com/search?tbm=isch&q=Events%20Ground%20IIT%20Kanpur,https://www.google.com/maps/search/?api=1&query=Events%20Ground%20IIT%20Kanpur
+Day 2,Competition,Robowars,14:00,17:00,OAT,https://www.google.com/search?tbm=isch&q=OAT%20IIT%20Kanpur,https://www.google.com/maps/search/?api=1&query=OAT%20IIT%20Kanpur
+Day 2,Talk,Maj Gen CS Mann,11:00,12:00,Center Stage,https://www.google.com/search?tbm=isch&q=Center%20Stage%20IIT%20Kanpur,https://www.google.com/maps/search/?api=1&query=Center%20Stage%20IIT%20Kanpur
+Day 2,Talk,MedTech Panel,14:00,14:45,Center Stage,https://www.google.com/search?tbm=isch&q=Center%20Stage%20IIT%20Kanpur,https://www.google.com/maps/search/?api=1&query=Center%20Stage%20IIT%20Kanpur
+Day 2,Talk,AI Summit Panel,15:00,15:45,L-17,https://www.google.com/search?tbm=isch&q=L-17%20IIT%20Kanpur,https://www.google.com/maps/search/?api=1&query=L-17%20IIT%20Kanpur
+Day 2,Talk,Group Captain Shubhanshu Shukla,16:00,17:00,L-18,https://www.google.com/search?tbm=isch&q=L-18%20IIT%20Kanpur,https://www.google.com/maps/search/?api=1&query=L-18%20IIT%20Kanpur
+Day 2,Show,EDM Night,20:00,22:00,Pronite Ground,https://www.google.com/search?tbm=isch&q=Pronite%20Ground%20IIT%20Kanpur,https://www.google.com/maps/search/?api=1&query=Pronite%20Ground%20IIT%20Kanpur
+Day 2,Show,Ahil and Sana,23:00,00:00,Events Ground,https://www.google.com/search?tbm=isch&q=Events%20Ground%20IIT%20Kanpur,https://www.google.com/maps/search/?api=1&query=Events%20Ground%20IIT%20Kanpur
+Day 3,Competition,AWS Hackathon,00:00,06:00,L-16,https://www.google.com/search?tbm=isch&q=L-16%20IIT%20Kanpur,https://www.google.com/maps/search/?api=1&query=L-16%20IIT%20Kanpur
+Day 3,Competition,Sky Sparks,07:30,16:00,Hockey Ground,https://www.google.com/search?tbm=isch&q=Hockey%20Ground%20IIT%20Kanpur,https://www.google.com/maps/search/?api=1&query=Hockey%20Ground%20IIT%20Kanpur
+Day 3,Competition,Bridge Design Challenge,09:00,12:00,Dance Room / Structure Lab,https://www.google.com/search?tbm=isch&q=Dance%20Room%20/%20Structure%20Lab%20IIT%20Kanpur,https://www.google.com/maps/search/?api=1&query=Dance%20Room%20/%20Structure%20Lab%20IIT%20Kanpur
+Day 3,Competition,TIC,09:00,13:00,L-10,https://www.google.com/search?tbm=isch&q=L-10%20IIT%20Kanpur,https://www.google.com/maps/search/?api=1&query=L-10%20IIT%20Kanpur
+Day 3,Competition,IARC,09:00,17:00,LITSOC Room,https://www.google.com/search?tbm=isch&q=LITSOC%20Room%20IIT%20Kanpur,https://www.google.com/maps/search/?api=1&query=LITSOC%20Room%20IIT%20Kanpur
+Day 3,Competition,Manoeuvre,09:00,17:00,Events Ground,https://www.google.com/search?tbm=isch&q=Events%20Ground%20IIT%20Kanpur,https://www.google.com/maps/search/?api=1&query=Events%20Ground%20IIT%20Kanpur
+Day 3,Competition,Beat the Market,09:00,17:00,L-9,https://www.google.com/search?tbm=isch&q=L-9%20IIT%20Kanpur,https://www.google.com/maps/search/?api=1&query=L-9%20IIT%20Kanpur
+Day 3,Competition,Pitch Premier,09:00,17:00,L-12,https://www.google.com/search?tbm=isch&q=L-12%20IIT%20Kanpur,https://www.google.com/maps/search/?api=1&query=L-12%20IIT%20Kanpur
+Day 3,Competition,UNSC,09:30,12:30,Senate,https://www.google.com/search?tbm=isch&q=Senate%20IIT%20Kanpur,https://www.google.com/maps/search/?api=1&query=Senate%20IIT%20Kanpur
+Day 3,Competition,TGP,10:00,17:00,Football Ground,https://www.google.com/search?tbm=isch&q=Football%20Ground%20IIT%20Kanpur,https://www.google.com/maps/search/?api=1&query=Football%20Ground%20IIT%20Kanpur
+Day 3,Competition,Multirotor,10:00,17:00,Events Ground,https://www.google.com/search?tbm=isch&q=Events%20Ground%20IIT%20Kanpur,https://www.google.com/maps/search/?api=1&query=Events%20Ground%20IIT%20Kanpur
+Day 3,Competition,Lok Sabha,13:30,16:30,Senate,https://www.google.com/search?tbm=isch&q=Senate%20IIT%20Kanpur,https://www.google.com/maps/search/?api=1&query=Senate%20IIT%20Kanpur
+Day 3,Competition,Robowars,23:00,03:00,OAT,https://www.google.com/search?tbm=isch&q=OAT%20IIT%20Kanpur,https://www.google.com/maps/search/?api=1&query=OAT%20IIT%20Kanpur
+Day 3,Talk,Women Panel,14:00,14:45,Center Stage,https://www.google.com/search?tbm=isch&q=Center%20Stage%20IIT%20Kanpur,https://www.google.com/maps/search/?api=1&query=Center%20Stage%20IIT%20Kanpur
+Day 3,Talk,AWS Keynote,14:45,15:30,L-18,https://www.google.com/search?tbm=isch&q=L-18%20IIT%20Kanpur,https://www.google.com/maps/search/?api=1&query=L-18%20IIT%20Kanpur
+Day 3,Talk,Air Marshal Manikanthan,16:00,17:00,L-18,https://www.google.com/search?tbm=isch&q=L-18%20IIT%20Kanpur,https://www.google.com/maps/search/?api=1&query=L-18%20IIT%20Kanpur
+Day 3,Show,Band Night,20:00,22:00,Pronite Ground,https://www.google.com/search?tbm=isch&q=Pronite%20Ground%20IIT%20Kanpur,https://www.google.com/maps/search/?api=1&query=Pronite%20Ground%20IIT%20Kanpur
+Day 3,Show,Ankit K,23:00,00:00,Events Ground,https://www.google.com/search?tbm=isch&q=Events%20Ground%20IIT%20Kanpur,https://www.google.com/maps/search/?api=1&query=Events%20Ground%20IIT%20Kanpur
+Day 3,Show,HR Kalakar,01:00,01:30,Events Ground,https://www.google.com/search?tbm=isch&q=Events%20Ground%20IIT%20Kanpur,https://www.google.com/maps/search/?api=1&query=Events%20Ground%20IIT%20Kanpur
+Day 4,Competition,NPCI Hackathon,00:00,06:00,L-16,https://www.google.com/search?tbm=isch&q=L-16%20IIT%20Kanpur,https://www.google.com/maps/search/?api=1&query=L-16%20IIT%20Kanpur
+Day 4,Competition,Trade Quest,09:00,12:00,L-9,https://www.google.com/search?tbm=isch&q=L-9%20IIT%20Kanpur,https://www.google.com/maps/search/?api=1&query=L-9%20IIT%20Kanpur
+Day 4,Competition,Industry Institute Interaction,09:00,12:00,L-10,https://www.google.com/search?tbm=isch&q=L-10%20IIT%20Kanpur,https://www.google.com/maps/search/?api=1&query=L-10%20IIT%20Kanpur
+Day 4,Competition,Product Challenge,09:00,13:00,L-11,https://www.google.com/search?tbm=isch&q=L-11%20IIT%20Kanpur,https://www.google.com/maps/search/?api=1&query=L-11%20IIT%20Kanpur
+Day 4,Competition,Manoeuvre,09:00,16:30,Events Ground,https://www.google.com/search?tbm=isch&q=Events%20Ground%20IIT%20Kanpur,https://www.google.com/maps/search/?api=1&query=Events%20Ground%20IIT%20Kanpur
+Day 4,Talk,Lt Gen D.P. Pandey Panel,14:30,15:30,L-18,https://www.google.com/search?tbm=isch&q=L-18%20IIT%20Kanpur,https://www.google.com/maps/search/?api=1&query=L-18%20IIT%20Kanpur
+Day 4,Show,Bollywood Night,20:00,22:00,Pronite Ground,https://www.google.com/search?tbm=isch&q=Pronite%20Ground%20IIT%20Kanpur,https://www.google.com/maps/search/?api=1&query=Pronite%20Ground%20IIT%20Kanpur
+Day 4,Show,Sanam Malik,23:00,00:00,Events Ground,https://www.google.com/search?tbm=isch&q=Events%20Ground%20IIT%20Kanpur,https://www.google.com/maps/search/?api=1&query=Events%20Ground%20IIT%20Kanpur

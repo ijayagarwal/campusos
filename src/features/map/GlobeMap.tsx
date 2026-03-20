@@ -7,7 +7,7 @@ import {
   type Camera as MapboxCameraRef,
 } from '@rnmapbox/maps';
 import { Ionicons } from '@expo/vector-icons';
-import { useEffect, useRef, useState } from 'react';
+import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react';
 import {
   ActivityIndicator,
   Platform,
@@ -17,15 +17,15 @@ import {
   View,
 } from 'react-native';
 
-import { colors, neutral, radius } from '../../theme';
+import { colors } from '../../theme';
+import type { TechKritiEvent } from '../../data/techkritiEvents';
+import { groupEventsByVenue, type VenueGroup } from '../../data/eventHelpers';
 import {
   getLastKnownLiveLocation,
   requestForegroundLocationAccess,
   startLiveLocationWatch,
 } from '../location/locationService';
-import {
-  CAMPUS_CENTER,
-} from './mockData';
+import { CAMPUS_CENTER } from './mockData';
 import {
   MAPBOX_PUBLIC_TOKEN,
   globeStyleURL,
@@ -35,249 +35,249 @@ import {
   globeAtmosphereStyle,
   startupFlightCameraStops,
 } from './mapStyles';
+import { ActivityMarker } from './ActivityMarker';
 import type { LiveLocation } from './types';
 
+export type GlobeMapHandle = {
+  flyTo: (coordinate: [number, number], zoom?: number) => void;
+};
+
 type GlobeMapProps = {
-  onLocatePress?: () => void;
-  onEventMarkerPress?: (eventId: string) => void;
+  events?: TechKritiEvent[];
+  selectedEventId?: string | null;
 };
 
 const STARTUP_FLIGHT_LEAD_MS = 450;
 
-export function GlobeMap({ onLocatePress, onEventMarkerPress }: GlobeMapProps) {
-  const cameraRef = useRef<MapboxCameraRef>(null);
-  const hasPlayedStartupFlightRef = useRef(false);
-  const startupFlightTimeoutsRef = useRef<Array<ReturnType<typeof setTimeout>>>([]);
-  const [liveLocation, setLiveLocation] = useState<LiveLocation | null>(null);
-  const [isMapLoaded, setIsMapLoaded] = useState(false);
-  const [startupFlightStatus, setStartupFlightStatus] = useState<
-    'idle' | 'queued' | 'running' | 'complete'
-  >('idle');
+export const GlobeMap = forwardRef<GlobeMapHandle, GlobeMapProps>(
+  function GlobeMap({ events = [], selectedEventId }, ref) {
+    const cameraRef = useRef<MapboxCameraRef>(null);
+    const hasPlayedStartupFlightRef = useRef(false);
+    const startupFlightTimeoutsRef = useRef<Array<ReturnType<typeof setTimeout>>>([]);
+    const [liveLocation, setLiveLocation] = useState<LiveLocation | null>(null);
+    const [isMapLoaded, setIsMapLoaded] = useState(false);
+    const [startupFlightStatus, setStartupFlightStatus] = useState<
+      'idle' | 'queued' | 'running' | 'complete'
+    >('idle');
 
-  function clearStartupFlightTimers() {
-    startupFlightTimeoutsRef.current.forEach((timeoutId) => {
-      clearTimeout(timeoutId);
-    });
-    startupFlightTimeoutsRef.current = [];
-  }
+    // Group events by venue for markers
+    const venueGroups = events.length > 0 ? groupEventsByVenue(events) : [];
 
-  function completeStartupFlight() {
-    clearStartupFlightTimers();
-    hasPlayedStartupFlightRef.current = true;
-    setStartupFlightStatus('complete');
-  }
+    // Find the venue of the selected event
+    const selectedEvent = selectedEventId
+      ? events.find((e) => e.id === selectedEventId)
+      : null;
+    const selectedVenueId = selectedEvent?.venueId ?? null;
 
-  useEffect(() => {
-    if (Platform.OS === 'web') {
-      return;
+    useImperativeHandle(ref, () => ({
+      flyTo(coordinate: [number, number], zoom = 17) {
+        completeStartupFlight();
+        focusCamera(coordinate, zoom);
+      },
+    }));
+
+    function clearStartupFlightTimers() {
+      startupFlightTimeoutsRef.current.forEach((id) => clearTimeout(id));
+      startupFlightTimeoutsRef.current = [];
     }
 
-    let isMounted = true;
-    let subscription: { remove: () => void } | null = null;
+    function completeStartupFlight() {
+      clearStartupFlightTimers();
+      hasPlayedStartupFlightRef.current = true;
+      setStartupFlightStatus('complete');
+    }
 
-    async function prepareLocation() {
-      try {
-        const access = await requestForegroundLocationAccess();
+    useEffect(() => {
+      if (Platform.OS === 'web') return;
 
-        if (!isMounted) {
-          return;
+      let isMounted = true;
+      let subscription: { remove: () => void } | null = null;
+
+      async function prepareLocation() {
+        try {
+          const access = await requestForegroundLocationAccess();
+          if (!isMounted || !access.granted || !access.servicesEnabled) return;
+
+          const lastKnown = await getLastKnownLiveLocation('me');
+          if (!isMounted) return;
+          if (lastKnown) setLiveLocation(lastKnown);
+
+          subscription = await startLiveLocationWatch(
+            'me',
+            (next) => setLiveLocation(next),
+            () => {},
+          );
+        } catch {
+          // Location not critical
         }
+      }
 
-        if (!access.granted || !access.servicesEnabled) {
-          return;
-        }
+      void prepareLocation();
+      return () => {
+        isMounted = false;
+        subscription?.remove();
+        clearStartupFlightTimers();
+      };
+    }, []);
 
-        const lastKnown = await getLastKnownLiveLocation('me');
+    function scheduleTimeout(cb: () => void, delay: number) {
+      const id = setTimeout(cb, delay);
+      startupFlightTimeoutsRef.current.push(id);
+    }
 
-        if (!isMounted) {
-          return;
-        }
+    function runStartupFlight() {
+      if (!cameraRef.current) {
+        scheduleTimeout(runStartupFlight, 220);
+        return;
+      }
+      const [regional, campus] = startupFlightCameraStops;
+      setStartupFlightStatus('running');
+      cameraRef.current.setCamera({
+        centerCoordinate: regional.centerCoordinate,
+        zoomLevel: regional.zoomLevel,
+        pitch: regional.pitch,
+        heading: regional.heading,
+        animationMode: regional.animationMode,
+        animationDuration: regional.animationDuration,
+      });
+      scheduleTimeout(() => {
+        cameraRef.current?.setCamera({
+          centerCoordinate: campus.centerCoordinate,
+          zoomLevel: campus.zoomLevel,
+          pitch: campus.pitch,
+          heading: campus.heading,
+          animationMode: campus.animationMode,
+          animationDuration: campus.animationDuration,
+        });
+      }, regional.animationDuration - 120);
+      scheduleTimeout(() => {
+        setStartupFlightStatus('complete');
+      }, regional.animationDuration + campus.animationDuration);
+    }
 
-        if (lastKnown) {
-          setLiveLocation(lastKnown);
-        }
+    useEffect(() => {
+      if (!isMapLoaded || hasPlayedStartupFlightRef.current) return;
+      hasPlayedStartupFlightRef.current = true;
+      setStartupFlightStatus('queued');
+      scheduleTimeout(runStartupFlight, STARTUP_FLIGHT_LEAD_MS);
+      return () => clearStartupFlightTimers();
+    }, [isMapLoaded]);
 
-        subscription = await startLiveLocationWatch(
-          'me',
-          (nextLocation) => {
-            setLiveLocation(nextLocation);
-          },
-          () => {},
-        );
-      } catch {
-        // Location not critical for map display
+    function focusCamera(coordinate: [number, number], zoomLevel = campusCameraSettings.zoomLevel) {
+      cameraRef.current?.setCamera({
+        centerCoordinate: coordinate,
+        zoomLevel,
+        pitch: campusCameraSettings.pitch,
+        heading: campusCameraSettings.heading,
+        animationMode: 'flyTo',
+        animationDuration: 1200,
+      });
+    }
+
+    function handleLocatePress() {
+      completeStartupFlight();
+      if (liveLocation) {
+        focusCamera([liveLocation.coordinate.longitude, liveLocation.coordinate.latitude], 15.8);
+      } else {
+        focusCamera(CAMPUS_CENTER, campusCameraSettings.zoomLevel);
       }
     }
 
-    void prepareLocation();
-
-    return () => {
-      isMounted = false;
-      subscription?.remove();
-      clearStartupFlightTimers();
-    };
-  }, []);
-
-  function scheduleStartupTimeout(callback: () => void, delay: number) {
-    const timeoutId = setTimeout(callback, delay);
-    startupFlightTimeoutsRef.current.push(timeoutId);
-  }
-
-  function runStartupFlight() {
-    if (!cameraRef.current) {
-      scheduleStartupTimeout(runStartupFlight, 220);
-      return;
-    }
-
-    const [regionalStop, campusStop] = startupFlightCameraStops;
-
-    setStartupFlightStatus('running');
-    cameraRef.current?.setCamera({
-      centerCoordinate: regionalStop.centerCoordinate,
-      zoomLevel: regionalStop.zoomLevel,
-      pitch: regionalStop.pitch,
-      heading: regionalStop.heading,
-      animationMode: regionalStop.animationMode,
-      animationDuration: regionalStop.animationDuration,
-    });
-
-    scheduleStartupTimeout(() => {
-      cameraRef.current?.setCamera({
-        centerCoordinate: campusStop.centerCoordinate,
-        zoomLevel: campusStop.zoomLevel,
-        pitch: campusStop.pitch,
-        heading: campusStop.heading,
-        animationMode: campusStop.animationMode,
-        animationDuration: campusStop.animationDuration,
-      });
-    }, regionalStop.animationDuration - 120);
-
-    scheduleStartupTimeout(() => {
-      setStartupFlightStatus('complete');
-    }, regionalStop.animationDuration + campusStop.animationDuration);
-  }
-
-  useEffect(() => {
-    if (!isMapLoaded || hasPlayedStartupFlightRef.current) {
-      return;
-    }
-
-    hasPlayedStartupFlightRef.current = true;
-    setStartupFlightStatus('queued');
-
-    scheduleStartupTimeout(runStartupFlight, STARTUP_FLIGHT_LEAD_MS);
-
-    return () => {
-      clearStartupFlightTimers();
-    };
-  }, [isMapLoaded]);
-
-  function focusCamera(
-    coordinate: [number, number],
-    zoomLevel = campusCameraSettings.zoomLevel,
-  ) {
-    cameraRef.current?.setCamera({
-      centerCoordinate: coordinate,
-      zoomLevel,
-      pitch: campusCameraSettings.pitch,
-      heading: campusCameraSettings.heading,
-      animationMode: 'flyTo',
-      animationDuration: 900,
-    });
-  }
-
-  function handleLocatePress() {
-    completeStartupFlight();
-    if (liveLocation) {
-      focusCamera(
-        [liveLocation.coordinate.longitude, liveLocation.coordinate.latitude],
-        15.8,
+    if (!MAPBOX_PUBLIC_TOKEN) {
+      return (
+        <View style={localStyles.fallbackContainer}>
+          <Text style={localStyles.fallbackTitle}>Mapbox token missing</Text>
+          <Text style={localStyles.fallbackBody}>
+            Set EXPO_PUBLIC_MAPBOX_PUBLIC_TOKEN before launching the dev client.
+          </Text>
+        </View>
       );
-    } else {
-      focusCamera(CAMPUS_CENTER, campusCameraSettings.zoomLevel);
     }
-    onLocatePress?.();
-  }
 
-  if (!MAPBOX_PUBLIC_TOKEN) {
     return (
-      <View style={localStyles.fallbackContainer}>
-        <Text style={localStyles.fallbackTitle}>Mapbox token missing</Text>
-        <Text style={localStyles.fallbackBody}>
-          Set EXPO_PUBLIC_MAPBOX_PUBLIC_TOKEN before launching the dev client.
-        </Text>
+      <View style={StyleSheet.absoluteFill}>
+        <MapView
+          style={StyleSheet.absoluteFill}
+          styleURL={globeStyleURL}
+          projection="globe"
+          compassEnabled={false}
+          scaleBarEnabled={false}
+          rotateEnabled
+          pitchEnabled
+          logoEnabled
+          attributionEnabled
+          logoPosition={{ left: 18, bottom: 18 }}
+          attributionPosition={{ right: 18, bottom: 18 }}
+          onDidFinishLoadingMap={() => setIsMapLoaded(true)}
+          onDidFinishLoadingStyle={() => setIsMapLoaded(true)}
+        >
+          <Atmosphere style={globeAtmosphereStyle} />
+          <Camera
+            ref={cameraRef}
+            defaultSettings={initialCameraSettings}
+            minZoomLevel={0}
+            maxZoomLevel={20}
+          />
+          <FillExtrusionLayer
+            id="iitk-buildings-3d"
+            sourceID="composite"
+            sourceLayerID="building"
+            filter={['==', ['get', 'extrude'], 'true']}
+            minZoomLevel={15}
+            maxZoomLevel={22}
+            style={buildingExtrusionLayerStyle}
+          />
+
+          {/* User location puck */}
+          {liveLocation ? (
+            <MarkerView
+              coordinate={[liveLocation.coordinate.longitude, liveLocation.coordinate.latitude]}
+              anchor={{ x: 0.5, y: 0.5 }}
+              allowOverlap
+              allowOverlapWithPuck
+              isSelected={false}
+            >
+              <View style={localStyles.userPuckOuter}>
+                <View style={localStyles.userPuckInner} />
+              </View>
+            </MarkerView>
+          ) : null}
+
+          {/* Activity zone markers — one per venue */}
+          {venueGroups.map((group) => (
+            <MarkerView
+              key={group.venueId}
+              coordinate={group.coordinate}
+              anchor={{ x: 0.5, y: 0.5 }}
+              allowOverlap
+              allowOverlapWithPuck
+              isSelected={false}
+            >
+              <ActivityMarker
+                venue={group.venue}
+                eventCount={group.eventCount}
+                color={group.primaryColor}
+                isLive={group.hasLiveEvent}
+                isSelected={group.venueId === selectedVenueId}
+              />
+            </MarkerView>
+          ))}
+        </MapView>
+
+        {!isMapLoaded ? (
+          <View style={localStyles.loadingOverlay}>
+            <ActivityIndicator color={colors.foreground} />
+            <Text style={localStyles.loadingText}>Loading globe...</Text>
+          </View>
+        ) : null}
+
+        <Pressable style={localStyles.locateButton} onPress={handleLocatePress}>
+          <Ionicons name="locate-outline" size={20} color={colors.foreground} />
+        </Pressable>
       </View>
     );
-  }
-
-  return (
-    <View style={StyleSheet.absoluteFill}>
-      <MapView
-        style={StyleSheet.absoluteFill}
-        styleURL={globeStyleURL}
-        projection="globe"
-        compassEnabled={false}
-        scaleBarEnabled={false}
-        rotateEnabled
-        pitchEnabled
-        logoEnabled
-        attributionEnabled
-        logoPosition={{ left: 18, bottom: 18 }}
-        attributionPosition={{ right: 18, bottom: 18 }}
-        onDidFinishLoadingMap={() => setIsMapLoaded(true)}
-        onDidFinishLoadingStyle={() => setIsMapLoaded(true)}
-      >
-        <Atmosphere style={globeAtmosphereStyle} />
-
-        <Camera
-          ref={cameraRef}
-          defaultSettings={initialCameraSettings}
-          minZoomLevel={0}
-          maxZoomLevel={20}
-        />
-
-        <FillExtrusionLayer
-          id="iitk-buildings-3d"
-          sourceID="composite"
-          sourceLayerID="building"
-          filter={['==', ['get', 'extrude'], 'true']}
-          minZoomLevel={15}
-          maxZoomLevel={22}
-          style={buildingExtrusionLayerStyle}
-        />
-
-        {liveLocation ? (
-          <MarkerView
-            coordinate={[
-              liveLocation.coordinate.longitude,
-              liveLocation.coordinate.latitude,
-            ]}
-            anchor={{ x: 0.5, y: 0.5 }}
-            allowOverlap
-            allowOverlapWithPuck
-            isSelected={false}
-          >
-            <View style={localStyles.userPuckOuter}>
-              <View style={localStyles.userPuckInner} />
-            </View>
-          </MarkerView>
-        ) : null}
-      </MapView>
-
-      {!isMapLoaded ? (
-        <View style={localStyles.loadingOverlay}>
-          <ActivityIndicator color={colors.foreground} />
-          <Text style={localStyles.loadingText}>Loading globe...</Text>
-        </View>
-      ) : null}
-
-      {/* Locate button */}
-      <Pressable style={localStyles.locateButton} onPress={handleLocatePress}>
-        <Ionicons name="locate-outline" size={20} color={colors.foreground} />
-      </Pressable>
-    </View>
-  );
-}
+  },
+);
 
 const localStyles = StyleSheet.create({
   fallbackContainer: {
