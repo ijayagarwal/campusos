@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { Animated, StyleSheet, Text, View } from 'react-native';
 
-import { colors, fontFamily, neutral } from '../../theme';
+import { colors, fontFamily } from '../../theme';
 
 type ActivityMarkerProps = {
   venue: string;
@@ -31,12 +31,12 @@ export function ActivityMarker({
           Animated.timing(pulseAnim, {
             toValue: 2,
             duration: 1400,
-            useNativeDriver: true,
+            useNativeDriver: false,
           }),
           Animated.timing(pulseAnim, {
             toValue: 1,
             duration: 1400,
-            useNativeDriver: true,
+            useNativeDriver: false,
           }),
         ]),
       );
