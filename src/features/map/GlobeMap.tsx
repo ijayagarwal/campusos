@@ -186,10 +186,16 @@ export const GlobeMap = forwardRef<GlobeMapHandle, GlobeMapProps>(
     if (!MAPBOX_PUBLIC_TOKEN) {
       return (
         <View style={localStyles.fallbackContainer}>
-          <Text style={localStyles.fallbackTitle}>Mapbox token missing</Text>
+          <View style={localStyles.fallbackIcon}>
+            <Text style={{ fontSize: 28 }}>🗺️</Text>
+          </View>
+          <Text style={localStyles.fallbackTitle}>Map unavailable</Text>
           <Text style={localStyles.fallbackBody}>
-            Set EXPO_PUBLIC_MAPBOX_PUBLIC_TOKEN before launching the dev client.
+            Add your Mapbox token to <Text style={{ fontWeight: '700' }}>.env</Text> to enable the interactive campus map.
           </Text>
+          <View style={localStyles.fallbackCode}>
+            <Text style={localStyles.fallbackCodeText}>EXPO_PUBLIC_MAPBOX_PUBLIC_TOKEN=pk.…</Text>
+          </View>
         </View>
       );
     }
@@ -284,20 +290,41 @@ const localStyles = StyleSheet.create({
     ...StyleSheet.absoluteFillObject,
     alignItems: 'center',
     justifyContent: 'center',
-    paddingHorizontal: 28,
-    backgroundColor: colors.background,
+    paddingHorizontal: 32,
+    gap: 10,
+    backgroundColor: '#f0f4f8',
+  },
+  fallbackIcon: {
+    width: 64,
+    height: 64,
+    borderRadius: 20,
+    backgroundColor: '#e2e8f0',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 4,
   },
   fallbackTitle: {
-    fontSize: 18,
+    fontSize: 16,
     fontWeight: '700',
     color: colors.foreground,
-    marginBottom: 10,
   },
   fallbackBody: {
     fontSize: 13,
     lineHeight: 20,
     color: colors.mutedForeground,
     textAlign: 'center',
+  },
+  fallbackCode: {
+    backgroundColor: '#1e293b',
+    borderRadius: 10,
+    paddingHorizontal: 14,
+    paddingVertical: 8,
+    marginTop: 4,
+  },
+  fallbackCodeText: {
+    fontSize: 11,
+    color: '#94a3b8',
+    fontFamily: Platform.OS === 'web' ? 'monospace' : undefined,
   },
   loadingOverlay: {
     ...StyleSheet.absoluteFillObject,

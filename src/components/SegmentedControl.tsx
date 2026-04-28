@@ -1,11 +1,7 @@
-import { useEffect, useRef } from 'react';
-import { Animated, LayoutAnimation, Platform, Pressable, StyleSheet, Text, UIManager, View } from 'react-native';
+import { useRef } from 'react';
+import { Animated, Platform, Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { colors, fontFamily, radius } from '../theme';
-
-if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental) {
-  UIManager.setLayoutAnimationEnabledExperimental(true);
-}
 
 type Segment = { key: string; label: string };
 
@@ -16,36 +12,14 @@ type SegmentedControlProps = {
   compact?: boolean;
 };
 
-export function SegmentedControl({
-  segments,
-  activeKey,
-  onSelect,
-  compact = false,
-}: SegmentedControlProps) {
-  const scaleAnims = useRef(
-    segments.map(() => new Animated.Value(1)),
-  ).current;
+export function SegmentedControl({ segments, activeKey, onSelect, compact = false }: SegmentedControlProps) {
+  const scaleAnims = useRef(segments.map(() => new Animated.Value(1))).current;
 
   function handlePress(key: string, index: number) {
-    LayoutAnimation.configureNext(
-      LayoutAnimation.create(200, 'easeInEaseOut', 'opacity'),
-    );
-
-    // Bounce animation on the pressed pill
     Animated.sequence([
-      Animated.timing(scaleAnims[index], {
-        toValue: 0.93,
-        duration: 80,
-        useNativeDriver: true,
-      }),
-      Animated.spring(scaleAnims[index], {
-        toValue: 1,
-        friction: 5,
-        tension: 300,
-        useNativeDriver: true,
-      }),
+      Animated.timing(scaleAnims[index], { toValue: 0.93, duration: 80, useNativeDriver: Platform.OS !== 'web' }),
+      Animated.spring(scaleAnims[index], { toValue: 1, friction: 5, tension: 300, useNativeDriver: Platform.OS !== 'web' }),
     ]).start();
-
     onSelect(key);
   }
 
@@ -56,13 +30,14 @@ export function SegmentedControl({
         return (
           <Animated.View
             key={segment.key}
-            style={[
-              styles.buttonWrapper,
-              { transform: [{ scale: scaleAnims[index] }] },
-            ]}
+            style={[styles.buttonWrapper, { transform: [{ scale: scaleAnims[index] }] }]}
           >
             <Pressable
-              style={[styles.button, isActive && styles.buttonActive]}
+              style={({ hovered }: any) => [
+                styles.button,
+                isActive && styles.buttonActive,
+                !isActive && hovered && styles.buttonHovered,
+              ]}
               onPress={() => handlePress(segment.key, index)}
             >
               <Text style={[styles.label, isActive && styles.labelActive]}>
@@ -92,8 +67,12 @@ const styles = StyleSheet.create({
   button: {
     alignItems: 'center',
     justifyContent: 'center',
-    height: 36,
+    height: 34,
     borderRadius: radius.md,
+    cursor: 'pointer',
+  } as any,
+  buttonHovered: {
+    backgroundColor: 'rgba(0,0,0,0.05)',
   },
   buttonActive: {
     backgroundColor: colors.foreground,
@@ -102,7 +81,8 @@ const styles = StyleSheet.create({
     fontFamily: fontFamily.semibold,
     fontSize: 13,
     color: colors.mutedForeground,
-  },
+    userSelect: 'none',
+  } as any,
   labelActive: {
     color: colors.inverseForeground,
   },

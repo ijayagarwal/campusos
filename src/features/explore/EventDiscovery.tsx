@@ -1,12 +1,11 @@
 import { Ionicons } from '@expo/vector-icons';
-import { FlatList, Platform, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { FlatList, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { accent, colors, fontFamily, neutral, radius, spacing } from '../../theme';
 import type { FestDay, TechKritiEvent } from '../../data/techkritiEvents';
 import { FEST_DAYS } from '../../data/techkritiEvents';
 import { getEventTimeLabel, estimateAttendees } from '../../data/eventHelpers';
 
-// Re-export for backwards compat
 export type CampusEvent = TechKritiEvent;
 
 type EventDiscoveryProps = {
@@ -41,10 +40,16 @@ export function EventDiscovery({
           return (
             <Pressable
               key={day}
-              style={[styles.dayPill, isActive && styles.dayPillActive]}
+              style={({ hovered }: any) => [
+                styles.dayPill,
+                isActive && styles.dayPillActive,
+                !isActive && hovered && styles.dayPillHovered,
+              ]}
               onPress={() => onDayChange(day)}
             >
-              {day === 'Live' && <View style={styles.liveDotSmall} />}
+              {day === 'Live' && (
+                <View style={[styles.liveDotSmall, isActive && styles.liveDotSmallActive]} />
+              )}
               <Text style={[styles.dayPillText, isActive && styles.dayPillTextActive]}>
                 {day === 'Live' ? 'Live Now' : day}
               </Text>
@@ -61,7 +66,9 @@ export function EventDiscovery({
             {selectedDay === 'Live' ? 'Happening Now' : selectedDay}
           </Text>
         </View>
-        <Text style={styles.headerCount}>{events.length} events</Text>
+        <View style={styles.countChip}>
+          <Text style={styles.headerCount}>{events.length} events</Text>
+        </View>
       </View>
 
       {/* Event cards */}
@@ -83,6 +90,7 @@ export function EventDiscovery({
         />
       ) : (
         <View style={styles.emptyState}>
+          <Ionicons name="calendar-outline" size={28} color={neutral[300]} />
           <Text style={styles.emptyText}>
             {selectedDay === 'Live' ? 'No events live right now' : 'No events on this day'}
           </Text>
@@ -108,43 +116,44 @@ function EventCard({
 
   return (
     <Pressable
-      style={[
+      style={({ hovered }: any) => [
         styles.card,
-        {
-          borderColor: event.accentColor + '28',
-          shadowColor: event.accentColor,
-        },
+        { borderColor: event.accentColor + '30', shadowColor: event.accentColor },
+        hovered && styles.cardHovered,
       ]}
       onPress={() => onPress?.(event)}
     >
       <View style={[styles.accentStrip, { backgroundColor: event.accentColor }]} />
       <View style={styles.cardContent}>
         <View style={styles.cardTop}>
-          <View style={[styles.categoryBadge, { backgroundColor: event.accentColor + '15' }]}>
+          <View style={[styles.categoryBadge, { backgroundColor: event.accentColor + '18' }]}>
             <Text style={[styles.category, { color: event.accentColor }]}>{event.category}</Text>
           </View>
           <Text style={styles.time}>{timeLabel}</Text>
         </View>
         <Text style={styles.title} numberOfLines={2}>{event.title}</Text>
-        <View style={styles.cardBottom}>
-          <View style={styles.venueRow}>
-            <Ionicons name="location-outline" size={12} color={neutral[400]} />
-            <Text style={styles.venue} numberOfLines={1}>{event.venue}</Text>
+        <View style={styles.cardMeta}>
+          <View style={styles.metaRow}>
+            <Ionicons name="location-outline" size={11} color={neutral[400]} />
+            <Text style={styles.metaText} numberOfLines={1}>{event.venue}</Text>
           </View>
-          <View style={styles.attendeeRow}>
-            <Ionicons name="people-outline" size={12} color={neutral[400]} />
-            <Text style={styles.attendees}>{attendees}</Text>
+          <View style={styles.metaRow}>
+            <Ionicons name="people-outline" size={11} color={neutral[400]} />
+            <Text style={styles.metaText}>{attendees}</Text>
           </View>
         </View>
 
-        {/* Add to planner */}
         <Pressable
-          style={[styles.plannerButton, isPlanned && styles.plannerButtonActive]}
+          style={({ hovered }: any) => [
+            styles.plannerButton,
+            isPlanned && styles.plannerButtonActive,
+            hovered && !isPlanned && styles.plannerButtonHovered,
+          ]}
           onPress={() => onAddToPlanner?.(event.id)}
         >
           <Ionicons
             name={isPlanned ? 'checkmark-circle' : 'add-circle-outline'}
-            size={14}
+            size={13}
             color={isPlanned ? accent.green.DEFAULT : neutral[400]}
           />
           <Text style={[styles.plannerButtonText, isPlanned && styles.plannerButtonTextActive]}>
@@ -159,6 +168,7 @@ function EventCard({
 const styles = StyleSheet.create({
   container: {
     gap: spacing.md,
+    paddingBottom: spacing.sm,
   },
   dayFilters: {
     paddingHorizontal: spacing.xl,
@@ -167,14 +177,20 @@ const styles = StyleSheet.create({
   dayPill: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 4,
+    gap: 5,
     paddingHorizontal: spacing.md,
     paddingVertical: 6,
-    borderRadius: 999,
+    borderRadius: radius.full,
+    backgroundColor: neutral[150],
+    borderWidth: 1,
+    borderColor: 'transparent',
+  },
+  dayPillHovered: {
     backgroundColor: neutral[200],
   },
   dayPillActive: {
     backgroundColor: colors.foreground,
+    borderColor: colors.foreground,
   },
   dayPillText: {
     fontFamily: fontFamily.semibold,
@@ -188,6 +204,9 @@ const styles = StyleSheet.create({
     width: 6,
     height: 6,
     borderRadius: 3,
+    backgroundColor: neutral[400],
+  },
+  liveDotSmallActive: {
     backgroundColor: accent.green.DEFAULT,
   },
   header: {
@@ -212,35 +231,46 @@ const styles = StyleSheet.create({
     fontSize: 15,
     color: colors.foreground,
   },
+  countChip: {
+    backgroundColor: neutral[150],
+    borderRadius: radius.full,
+    paddingHorizontal: spacing.sm + 2,
+    paddingVertical: 3,
+  },
   headerCount: {
-    fontFamily: fontFamily.regular,
-    fontSize: 12,
-    color: neutral[500],
+    fontFamily: fontFamily.semibold,
+    fontSize: 11,
+    color: colors.mutedForeground,
   },
   listContent: {
     paddingHorizontal: spacing.xl,
-    gap: spacing.lg,
-    paddingVertical: spacing.sm,
+    gap: spacing.md,
+    paddingBottom: spacing.xs,
   },
   card: {
-    width: 220,
+    width: 230,
     backgroundColor: '#ffffff',
     borderRadius: radius.lg,
     flexDirection: 'row',
-    overflow: Platform.OS === 'android' ? 'hidden' : 'visible',
+    overflow: 'visible',
     borderWidth: 1,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 12,
-    elevation: 4,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.10,
+    shadowRadius: 16,
+  },
+  cardHovered: {
+    shadowOpacity: 0.18,
+    shadowRadius: 20,
   },
   accentStrip: {
     width: 4,
+    borderTopLeftRadius: radius.lg,
+    borderBottomLeftRadius: radius.lg,
   },
   cardContent: {
     flex: 1,
     padding: spacing.md,
-    gap: 5,
+    gap: 6,
   },
   cardTop: {
     flexDirection: 'row',
@@ -249,75 +279,70 @@ const styles = StyleSheet.create({
   },
   categoryBadge: {
     borderRadius: 6,
-    paddingHorizontal: 6,
+    paddingHorizontal: 7,
     paddingVertical: 2,
   },
   category: {
     fontFamily: fontFamily.semibold,
-    fontSize: 10,
+    fontSize: 9,
     textTransform: 'uppercase',
-    letterSpacing: 0.5,
+    letterSpacing: 0.6,
   },
   time: {
     fontFamily: fontFamily.semibold,
-    fontSize: 12,
-    color: colors.foreground,
+    fontSize: 11,
+    color: colors.mutedForeground,
   },
   title: {
     fontFamily: fontFamily.semibold,
     fontSize: 14,
     color: colors.foreground,
-    lineHeight: 19,
+    lineHeight: 20,
   },
-  cardBottom: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.md,
+  cardMeta: {
+    gap: 3,
   },
-  venueRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 4,
-    flex: 1,
-  },
-  venue: {
-    fontFamily: fontFamily.regular,
-    fontSize: 11,
-    color: neutral[500],
-    flex: 1,
-  },
-  attendeeRow: {
+  metaRow: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 4,
   },
-  attendees: {
+  metaText: {
     fontFamily: fontFamily.regular,
     fontSize: 11,
     color: neutral[500],
+    flex: 1,
   },
   plannerButton: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 4,
     alignSelf: 'flex-start',
-    paddingVertical: 3,
+    paddingVertical: 4,
+    paddingHorizontal: 8,
+    borderRadius: radius.full,
     marginTop: 2,
+    backgroundColor: neutral[100],
   },
-  plannerButtonActive: {},
+  plannerButtonHovered: {
+    backgroundColor: neutral[200],
+  },
+  plannerButtonActive: {
+    backgroundColor: accent.green.muted,
+  },
   plannerButtonText: {
-    fontFamily: fontFamily.regular,
+    fontFamily: fontFamily.semibold,
     fontSize: 10,
-    color: neutral[400],
+    color: neutral[500],
   },
   plannerButtonTextActive: {
     color: accent.green.DEFAULT,
-    fontFamily: fontFamily.semibold,
   },
   emptyState: {
     paddingHorizontal: spacing.xl,
     paddingVertical: spacing['2xl'],
     alignItems: 'center',
+    gap: spacing.md,
   },
   emptyText: {
     fontFamily: fontFamily.regular,

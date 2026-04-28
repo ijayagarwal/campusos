@@ -36,6 +36,13 @@ const config: ExpoConfig = {
   },
   web: {
     favicon: './assets/favicon.png',
+    bundler: 'metro',
+    output: 'single',
+    name: 'CampusOS',
+    shortName: 'CampusOS',
+    description: 'Campus event discovery and navigation app',
+    themeColor: '#ffffff',
+    backgroundColor: '#ffffff',
   },
   plugins: [
     'expo-font',

@@ -1,8 +1,8 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useEffect, useRef } from 'react';
-import { Animated, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Animated, Platform, Pressable, StyleSheet, Text, View } from 'react-native';
 
-import { accent, colors, fontFamily, radius, spacing } from '../../theme';
+import { accent, colors, fontFamily, spacing } from '../../theme';
 
 type FestBannerProps = {
   festName: string;
@@ -15,16 +15,8 @@ export function FestBanner({ festName, onPress }: FestBannerProps) {
   useEffect(() => {
     const pulse = Animated.loop(
       Animated.sequence([
-        Animated.timing(pulseAnim, {
-          toValue: 1.6,
-          duration: 1200,
-          useNativeDriver: true,
-        }),
-        Animated.timing(pulseAnim, {
-          toValue: 1,
-          duration: 1200,
-          useNativeDriver: true,
-        }),
+        Animated.timing(pulseAnim, { toValue: 1.6, duration: 1200, useNativeDriver: Platform.OS !== 'web' }),
+        Animated.timing(pulseAnim, { toValue: 1, duration: 1200, useNativeDriver: Platform.OS !== 'web' }),
       ]),
     );
     pulse.start();
@@ -32,14 +24,12 @@ export function FestBanner({ festName, onPress }: FestBannerProps) {
   }, [pulseAnim]);
 
   return (
-    <Pressable style={styles.container} onPress={onPress}>
+    <Pressable
+      style={({ hovered }: any) => [styles.container, hovered && styles.containerHovered]}
+      onPress={onPress}
+    >
       <View style={styles.dotWrapper}>
-        <Animated.View
-          style={[
-            styles.dotPulse,
-            { transform: [{ scale: pulseAnim }] },
-          ]}
-        />
+        <Animated.View style={[styles.dotPulse, { transform: [{ scale: pulseAnim }] }]} />
         <View style={styles.dot} />
       </View>
       <Text style={styles.label}>{festName}</Text>
@@ -58,6 +48,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.md + 2,
     paddingVertical: spacing.sm + 2,
     gap: spacing.sm,
+    cursor: 'pointer',
+  } as any,
+  containerHovered: {
+    backgroundColor: '#27272a',
   },
   dotWrapper: {
     width: 10,
@@ -82,5 +76,6 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: colors.inverseForeground,
     letterSpacing: 0.2,
-  },
+    userSelect: 'none',
+  } as any,
 });
